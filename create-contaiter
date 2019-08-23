@@ -1,0 +1,4 @@
+#!/bin/sh
+
+docker run -it --rm --name pycrontax --mount \
+  type=bind,source="$(pwd)",target=/usr/local/monetax-cron $1
