@@ -3,10 +3,10 @@ from datetime import datetime
 from setting import *
 import pymssql
 
-mssql_host = "172.17.0.1"
-mssql_user = "sa"
-mssql_pwd = "passw0rd"
-mssql_db = "monitoring"
+# mssql_host = "172.17.0.1"
+# mssql_user = "sa"
+# mssql_pwd = "passw0rd"
+# mssql_db = "monitoring"
 query = """
     select nop.nopd,
         nop.nama_objek_usaha as nama_objek_pajak,
