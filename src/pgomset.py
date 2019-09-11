@@ -28,6 +28,8 @@ query = """
         on sum2.nopd=nop.nopd
     left join pajak_online_dki.dbo.tbl_sum_nopd as sum3
         on sum3.nopd=nop.nopd
+    where upper(nop.nama_objek_usaha) not like '%TUTUP%'
+    order by sum3.sum_trx desc 
 """
 
 insert = """

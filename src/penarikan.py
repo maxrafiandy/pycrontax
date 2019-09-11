@@ -27,6 +27,7 @@ query = """
     left join pajak_online_dki.dbo.tbl_fact_pembayaran_riil as riil on riil.nopd = nop.nopd
     where nop.nama_objek_usaha not like '%TUTUP%'
     group by nop.nopd, nop.nama_objek_usaha, nop.kode_sudin, sum.sum_trx, sum.sum_omset, sum_pod.sum_trx, sum_pod.sum_omset
+    order by sum_pod.sum_omset desc
 """
 
 insert = """

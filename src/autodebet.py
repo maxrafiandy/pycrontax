@@ -106,7 +106,7 @@ def getQuery(months, years):
 	    ) mpd_sspd
 	    WHERE autodebet_1 != 0
 	    AND autodebet_2 != 0
-	    -- AND autodebet_3 != 0
+	    AND autodebet_3 != 0
 	"""
 	return query.format(months_0 = months[0], months_1=months[1], months_2=months[2],
 		years_0=years[0], years_1=years[1], years_2=years[2])
