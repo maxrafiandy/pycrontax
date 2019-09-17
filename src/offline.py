@@ -28,25 +28,28 @@ query = """
           when 1 then 'ONLINE'
           else 'OFFLINE'
         end as status,
-        case kwp.status
+        coalesce(ig.last_status,
+					case kwp.status
           when 1 then getdate()
           else null
-        end as last_availability,
+        end) as last_availability,
         coalesce(
-          rby.tanggal_trx,
-          null) as last_reliable
+          ig.last_data,
+					rby.tanggal_trx,
+        null) as last_reliable
         from master_pajak_online_dki.dbo.tbl_nopd as nop
-        left join monitoring_new.dbo.koordinat_wp as kwp on kwp.nopd = nop.nopd
+        left join monitoring.dbo.koordinat_wp as kwp on kwp.nopd = nop.nopd
         left join (select nopd, max(LASTUPDATE_TODAY) tanggal_trx from PAJAK_ONLINE_DKI.dbo.TBL_SUM_NOPD group by nopd)
         rby on rby.nopd = nop.nopd
         left join master_pajak_online_dki.dbo.tbl_npwpd as npd on npd.npwpd = nop.npwpd
+        left join etax_grabber.dbo.index_grabber as ig on ig.nopd = nop.nopd
         where nop.status_live in (4,5,6)
         and UPPER(nop.nama_objek_usaha) NOT LIKE '%TUTUP%'
         and kwp.status != 1
         group by nop.nopd, nop.npwpd, nop.nama_objek_usaha, npd.nama_wajib_pajak,
         nop.alamat, nop.kode_sudin, nop.kode_jenis_usaha,
         nop.status_live, kwp.ipaddress,
-        kwp.keterangan, kwp.status, rby.tanggal_trx, kwp.last_status
+        kwp.keterangan, ig.last_status, kwp.status, ig.last_data, rby.tanggal_trx, kwp.last_status
 """
 
 insert = """
