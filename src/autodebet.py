@@ -124,7 +124,7 @@ def autodebet():
 			year = year - 1
 		months.append('%02d' % month)
 		years.append('%d' % year)
-	mysql_conn = connector.connect(host=MYSQL_HOST,user=MYSQL_USER,passwd=MYSQL_PWD,database=MYSQL_DB)
+	mysql_conn = connector.connect(host=MYSQL_HOST,user=MYSQL_USER,passwd=MYSQL_PWD,database=MYSQL_DB,port=MYSQL_PORT)
 	mssql_conn = pymssql.connect(MSSQL_HOST,MSSQL_USER,MSSQL_PWD,MSSQL_DB)
 
 	mysql_cursor = mysql_conn.cursor()

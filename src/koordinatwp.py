@@ -7,11 +7,12 @@ insertQuery = """
     kode_sudin, status, status_live, ipaddress, last_status, keterangan)
     SELECT n.nopd, n.npwpd, n.nama_objek_usaha, n.alamat, coalesce(g.latitude, '0.00') latitude,
     coalesce(g.longitude, '0.00') longitude, n.kode_sudin,
-    case
+    coalesce(
+        ig.status_agent, case
         when s.tanggal_trx is null then 0
         when s.tanggal_trx < DATEADD(day, -2, GETDATE()) then 0
-        else 1
-    end status,
+		else 1
+    end, 0) status,
     n.status_live,
     coalesce(g.iphost, 'N/A') ipaddress, GETDATE() last_status, null keterangan
     from MASTER_PAJAK_ONLINE_DKI.dbo.TBL_NOPD n
@@ -52,9 +53,10 @@ insertQuery = """
     ) g on g.nopd = n.nopd
     left join (select nopd, max(LASTUPDATE_TODAY) tanggal_trx from PAJAK_ONLINE_DKI.dbo.TBL_SUM_NOPD group by nopd) s
     on s.nopd = n.nopd
+    left join etax_grabber.dbo.index_grabber ig on ig.nopd = n.nopd 
     WHERE UPPER(n.nama_objek_usaha) NOT LIKE '%TUTUP%'
     AND n.status_live in (4,5,6)
-    AND k.nopd IS NULL
+    -- AND k.nopd IS NULL
 """
 updateQuery = """
     update os set os.status = ns.status
