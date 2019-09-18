@@ -5,8 +5,8 @@ import pymssql
 insertQuery = """
     INSERT INTO koordinat_wp(nopd, npwpd, nama_objek_usaha, alamat, latitude, longitude,
     kode_sudin, status, status_live, ipaddress, last_status, keterangan)
-    SELECT n.nopd, n.npwpd, n.nama_objek_usaha, n.alamat, coalesce(g.latitude, '0.00') latitude,
-    coalesce(g.longitude, '0.00') longitude, n.kode_sudin,
+    SELECT n.nopd, n.npwpd, n.nama_objek_usaha, n.alamat, coalesce(ig.latitude, g.latitude, '0.00') latitude,
+    coalesce(ig.longitude, g.longitude, '0.00') longitude, n.kode_sudin,
     coalesce(
         ig.status_agent, case
         when s.tanggal_trx is null then 0
@@ -53,7 +53,7 @@ insertQuery = """
     ) g on g.nopd = n.nopd
     left join (select nopd, max(LASTUPDATE_TODAY) tanggal_trx from PAJAK_ONLINE_DKI.dbo.TBL_SUM_NOPD group by nopd) s
     on s.nopd = n.nopd
-    left join etax_grabber.dbo.index_grabber ig on ig.nopd = n.nopd 
+    join etax_grabber.dbo.index_grabber ig on ig.nopd = n.nopd 
     WHERE UPPER(n.nama_objek_usaha) NOT LIKE '%TUTUP%'
     AND n.status_live in (4,5,6)
     -- AND k.nopd IS NULL
