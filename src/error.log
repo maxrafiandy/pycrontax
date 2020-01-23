@@ -6,3 +6,27 @@ Traceback (most recent call last):
     cursor.execute(insertQuery)
   File "src\pymssql.pyx", line 465, in pymssql.Cursor.execute
 ProgrammingError: (207, "Invalid column name 'longitude'.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2019-09-27 09:33:33,109 - offlind is not a valid argument!
+None
+2019-09-27 09:33:56,440 - --help is not a valid argument!
+None
+2019-09-27 09:34:30,578 - --help is not a valid argument!
+None
+2019-09-27 10:14:46,046 - (207, "Invalid column name 'last_update'.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+Traceback (most recent call last):
+  File "C:\Users\BRI\Documents\pycrontax\src\koordinatwp.py", line 81, in koordinatwp
+    cursor.execute(insertQuery)
+  File "src\pymssql.pyx", line 465, in pymssql.Cursor.execute
+ProgrammingError: (207, "Invalid column name 'last_update'.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2019-09-27 10:29:05,694 - (515, "Cannot insert the value NULL into column 'last_status', table 'monitoring.dbo.koordinat_wp'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+Traceback (most recent call last):
+  File "C:\Users\BRI\Documents\pycrontax\src\koordinatwp.py", line 81, in koordinatwp
+    cursor.execute(insertQuery)
+  File "src\pymssql.pyx", line 467, in pymssql.Cursor.execute
+IntegrityError: (515, "Cannot insert the value NULL into column 'last_status', table 'monitoring.dbo.koordinat_wp'; column does not allow nulls. INSERT fails.DB-Lib error message 20018, severity 16:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2019-09-27 10:43:43,776 - (102, "Incorrect syntax near 'last_status'.DB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+Traceback (most recent call last):
+  File "C:\Users\BRI\Documents\pycrontax\src\koordinatwp.py", line 82, in koordinatwp
+    cursor.execute(insertQuery)
+  File "src\pymssql.pyx", line 465, in pymssql.Cursor.execute
+ProgrammingError: (102, "Incorrect syntax near 'last_status'.DB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\nDB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\n")

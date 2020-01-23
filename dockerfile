@@ -1,4 +1,4 @@
-FROM python:2-slim-stretch
+FROM python:2-stretch
 
 WORKDIR /usr/local/src
 

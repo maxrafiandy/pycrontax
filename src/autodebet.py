@@ -8,11 +8,11 @@ insert = """
 	insert into tbl_mirror_autodebet
 	(nopd, status, autodebet_1, autodebet_2, autodebet_3,
 	masapajak, tahunpajak, created_at, updated_at)
-	values (%s, %d, %s, %s, %s, %s, %d, %s, %s)
+	values ('%s', %d, '%s', '%s', '%s', '%s', '%d', '%s', '%s')
 """
 
 def getQuery(months, years):
-	query = """SELECT *, {months_2} masapajak, {years_2} tahunpajak, NOW(), NOW()
+	query = """SELECT *, '{months_2}' masapajak, '{years_2}' tahunpajak, NOW(), NOW()
 	    FROM (
 	      (
 	        SELECT master.*,
@@ -33,8 +33,8 @@ def getQuery(months, years):
 	          FROM mpd_sspd
 	          WHERE nop is not null
 	          AND STATUS = 3
-	          AND masapajak = {months_0}
-	          AND tahunpajak = {years_0}
+	          AND masapajak = '{months_0}'
+	          AND tahunpajak = '{years_0}'
 	          GROUP BY nop, status
 	        ) sukses1 on sukses1.nop = master.nop
 	        -- sukses 2 bulan terakhir
@@ -43,8 +43,8 @@ def getQuery(months, years):
 	          FROM mpd_sspd
 	          WHERE nop is not null
 	          AND STATUS = 3
-	          AND masapajak = {months_1}
-	          AND tahunpajak = {years_1}
+	          AND masapajak = '{months_1}'
+	          AND tahunpajak = '{years_1}'
 	          GROUP BY nop
 	        ) sukses2 on sukses2.nop = master.nop
 	        -- sukses 1 bulan terakhir
@@ -53,8 +53,8 @@ def getQuery(months, years):
 	          FROM mpd_sspd
 	          WHERE nop is not null
 	          AND STATUS = 3
-	          AND masapajak = {months_2}
-	          AND tahunpajak = {years_2}
+	          AND masapajak = '{months_2}'
+	          AND tahunpajak = '{years_2}'
 	          GROUP BY nop
 	        ) sukses3 on sukses3.nop = master.nop
 	      )
@@ -78,8 +78,8 @@ def getQuery(months, years):
 	          FROM mpd_sspd
 	          WHERE nop is not null
 	          AND STATUS != 3
-	          AND masapajak = {months_0}
-	          AND tahunpajak = {years_0}
+	          AND masapajak = '{months_0}'
+	          AND tahunpajak = '{years_0}'
 	          GROUP BY nop, status
 	        ) sukses1 on sukses1.nop = master.nop
 	        -- sukses 2 bulan terakhir
@@ -88,8 +88,8 @@ def getQuery(months, years):
 	          FROM mpd_sspd
 	          WHERE nop is not null
 	          AND STATUS != 3
-	          AND masapajak = {months_1}
-	          AND tahunpajak = {years_1}
+	          AND masapajak = '{months_1}'
+	          AND tahunpajak = '{years_1}'
 	          GROUP BY nop
 	        ) sukses2 on sukses2.nop = master.nop
 	        -- sukses 1 bulan terakhir
@@ -98,8 +98,8 @@ def getQuery(months, years):
 	          FROM mpd_sspd
 	          WHERE nop is not null
 	          AND STATUS != 3
-	          AND masapajak = {months_2}
-	          AND tahunpajak = {years_2}
+	          AND masapajak = '{months_2}'
+	          AND tahunpajak = '{years_2}'
 	          GROUP BY nop
 	        ) sukses3 on sukses3.nop = master.nop
 	      )
@@ -108,6 +108,10 @@ def getQuery(months, years):
 	    AND autodebet_2 != 0
 	    AND autodebet_3 != 0
 	"""
+
+	print(query.format(months_0 = months[0], months_1=months[1], months_2=months[2],
+		years_0=years[0], years_1=years[1], years_2=years[2]))
+
 	return query.format(months_0 = months[0], months_1=months[1], months_2=months[2],
 		years_0=years[0], years_1=years[1], years_2=years[2])
 
