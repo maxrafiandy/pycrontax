@@ -14,7 +14,8 @@ insertQuery = """
 		else 1
     end, 0) status,
     n.status_live,
-    coalesce(g.iphost, 'N/A') ipaddress, GETDATE() last_status, null keterangan
+    coalesce(g.iphost, 'N/A') ipaddress, coalesce(ig.last_status, DATEADD(day, -30, GETDATE())) last_status, 
+    null keterangan 
     from MASTER_PAJAK_ONLINE_DKI.dbo.TBL_NOPD n
     left join koordinat_wp k on k.nopd = n.nopd
     left join (
