@@ -38,7 +38,7 @@ query = """
 					rby.tanggal_trx,
         null) as last_reliable
         from master_pajak_online_dki.dbo.tbl_nopd as nop
-        left join monitoring_new.dbo.koordinat_wp as kwp on kwp.nopd = nop.nopd
+        left join """ + MSSQL_DB + """.dbo.koordinat_wp as kwp on kwp.nopd = nop.nopd
         left join (select nopd, max(LASTUPDATE_TODAY) tanggal_trx from PAJAK_ONLINE_DKI.dbo.TBL_SUM_NOPD group by nopd)
         rby on rby.nopd = nop.nopd
         left join master_pajak_online_dki.dbo.tbl_npwpd as npd on npd.npwpd = nop.npwpd
