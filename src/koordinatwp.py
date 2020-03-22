@@ -5,8 +5,8 @@ import pymssql
 insertQuery = """
     INSERT INTO koordinat_wp(nopd, npwpd, nama_objek_usaha, alamat, latitude, longitude,
     kode_sudin, status, status_live, ipaddress, last_status, keterangan)
-    SELECT n.nopd, n.npwpd, n.nama_objek_usaha, n.alamat, coalesce(ig.latitude, g.latitude, '0.00') latitude,
-    coalesce(ig.longitude, g.longitude, '0.00') longitude, n.kode_sudin,
+    SELECT n.nopd, n.npwpd, n.nama_objek_usaha, n.alamat, coalesce(ig.latitude, g.latitude, '0') latitude,
+    coalesce(ig.longitude, g.longitude, '0') longitude, n.kode_sudin,
     coalesce(
         ig.status_agent, case
         when s.tanggal_trx is null then 0
