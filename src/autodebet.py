@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from datetime import datetime
 from mysql import connector
 import src.config as config

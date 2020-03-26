@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import src.config as config
 import pymssql
 
