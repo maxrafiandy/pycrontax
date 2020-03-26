@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 from datetime import datetime
-from setting import *
+import src.config as config
 import pymssql
 
-query = """
+QUERY = f"""
     SELECT
         nop.nopd,
         nop.npwpd,
@@ -38,7 +38,7 @@ query = """
 					rby.tanggal_trx,
         null) as last_reliable
         from master_pajak_online_dki.dbo.tbl_nopd as nop
-        left join """ + MSSQL_DB + """.dbo.koordinat_wp as kwp on kwp.nopd = nop.nopd
+        left join {config.MSSQL_DB}.dbo.koordinat_wp as kwp on kwp.nopd = nop.nopd
         left join (select nopd, max(LASTUPDATE_TODAY) tanggal_trx from PAJAK_ONLINE_DKI.dbo.TBL_SUM_NOPD group by nopd)
         rby on rby.nopd = nop.nopd
         left join master_pajak_online_dki.dbo.tbl_npwpd as npd on npd.npwpd = nop.npwpd
@@ -52,7 +52,7 @@ query = """
         kwp.keterangan, ig.last_status, kwp.status, ig.last_data, rby.tanggal_trx, kwp.last_status
 """
 
-insert = """
+INSERT = """
     insert into tbl_mirror_history_offline
     (nopd, npwpd, nama_objek_usaha, nama_wajib_pajak, alamat,
     kode_sudin, jenis_usaha, jenis_penarikan, ipaddress,
@@ -65,15 +65,18 @@ insert = """
 def offline():
     conn = pymssql.connect(MSSQL_HOST, MSSQL_USER, MSSQL_PWD, MSSQL_DB)
     cursor = conn.cursor()
+    
     try:
-        cursor.execute(query)
+        cursor.execute(QUERY)
         offline_devices = cursor.fetchall()
         cursor.execute("truncate table tbl_mirror_history_offline")
-        cursor.executemany(insert, offline_devices)
+        cursor.executemany(INSERT, offline_devices)
         conn.commit()
-        print "Success! Table tbl_mirror_history_offline has been mirrored."
-    except Exception as e:
+        config.loginfo("Success! Table tbl_mirror_history_offline has been mirrored.")
+
+    except Exception as err:
         conn.rollback()
-        print("Error => : %s" % e)
+        config.logexception(err)
+
     finally:
         conn.close()

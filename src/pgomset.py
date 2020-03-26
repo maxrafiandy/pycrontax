@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 from datetime import datetime
-from setting import *
+import src.config
 import pymssql
 
-mssql_host = "172.17.0.1"
-mssql_user = "sa"
-mssql_pwd = "passw0rd"
-mssql_db = "monitoring"
-query = """
+QUERY = """
     select
         nop.nopd,
         nop.nama_objek_usaha as nama_objek_pajak,
@@ -32,7 +28,7 @@ query = """
     order by sum3.sum_trx desc 
 """
 
-insert = """
+INSERT = """
     insert into tbl_mirror_progres_omset
     (nopd, nama_objek_pajak, kode_sudin,
     trx1, omset1, pajak1, trx2, omset2, pajak2,
@@ -43,17 +39,18 @@ insert = """
 """
 
 def getQuery(months, years):
-    return query.format(year_month_0='%s%s' % (years[0],months[0]),
+    return QUERY.format(year_month_0='%s%s' % (years[0],months[0]),
         year_month_1='%s%s' % (years[1],months[1]))
 
 def getInsert(month, year):
-    return insert.format(month=month, year=year)
+    return INSERT.format(month=month, year=year)
 
 def pgomset():
     months = []
     years = []
     collections = [2,1]
     today = datetime.today()
+    
     for i in collections:
         year = today.year
         month = today.month-i
@@ -64,15 +61,18 @@ def pgomset():
         years.append('%d' % year)
     conn = pymssql.connect(MSSQL_HOST,MSSQL_USER,MSSQL_PWD,MSSQL_DB)
     cursor = conn.cursor()
+    
     try:
         cursor.execute(getQuery(months,years))
         progres = cursor.fetchall()
         cursor.execute("truncate table tbl_mirror_progres_omset")
         cursor.executemany(getInsert(months[1], years[1]), progres)
         conn.commit()
-        print "Success! Table tbl_mirror_progres_omset has been mirrored."
-    except Exception as e:
+        config.loginfo("Success! Table tbl_mirror_progres_omset has been mirrored.")
+    
+    except Exception as err:
         conn.rollback()
-        log_error(e)
+        config.logexception(err)
+
     finally:
         conn.close()

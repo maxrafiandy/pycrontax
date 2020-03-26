@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from setting import *
+import src.config as config
 import pymssql
 
 insertQuery = """
@@ -77,14 +77,17 @@ updateQuery = """
 def koordinatwp():
     conn = pymssql.connect(MSSQL_HOST,MSSQL_USER,MSSQL_PWD,MSSQL_DB)
     cursor = conn.cursor(as_dict=True)
+    
     try:
         cursor.execute("truncate table koordinat_wp")
         cursor.execute(insertQuery)
         conn.commit()
         print "Success! Table koordinat_wp has been mirrored."
-    except Exception as e:
+    
+    except Exception as err:
         conn.rollback()
-        log_error(e)
+        config.logerror(err)
+    
     finally:
         conn.close()
 
@@ -92,12 +95,15 @@ def koordinatwp():
 def updateKoordinatWp():
     conn = pymssql.connect(MSSQL_HOST,MSSQL_USER,MSSQL_PWD,MSSQL_DB)
     cursor = conn.cursor()
+    
     try:
         cursor.execute(updateQuery)
         conn.commit()
-        print "Success! Table koordinat_wp has been updated."
-    except Exception as e:
+        config.loginfo("Success! Table koordinat_wp has been updated.")
+    
+    except Exception as err:
         conn.rollback()
-        log_error(e)
+        config.logexception(err)
+    
     finally:
         conn.close()

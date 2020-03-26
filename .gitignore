@@ -1,6 +1,2 @@
-/log/*.log
-/src/*.pyc
-.gitlab
-.github
 .env
 .vscode

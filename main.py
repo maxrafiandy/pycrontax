@@ -13,6 +13,7 @@ if __name__ == '__main__':
     for arg in args:
         # skip argumen pertama (command)
         if arg == sys.argv[0]: continue
+        
         # jalankan mirror/update
         if arg == "autodebet":
             print "Updating tbl_mirror_autodebet . . ."

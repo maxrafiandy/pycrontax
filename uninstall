@@ -1,4 +1,0 @@
-#!/bin/bash
-TARGET_DIR=/usr/local/monetax-cron
-rm -r $TARGET_DIR
-rm /usr/bin/monetax_cron

@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 from datetime import datetime
-from setting import *
+import src.config as config
 import pymssql
 
-# mssql_host = "172.17.0.1"
-# mssql_user = "sa"
-# mssql_pwd = "passw0rd"
-# mssql_db = "monitoring"
-query = """
-    select nop.nopd,
+INSERT = """
+    insert into tbl_mirror_penarikan
+    (nopd, nama_objek_pajak, kode_sudin,
+    trx1, omset1, trx2, omset2, trx3, omset3,
+    setoran, masapajak, tahunpajak, created_at, updated_at)
+    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+    %s, %s, GETDATE(), GETDATE())
+"""
+
+def getQuery(month, year):
+    return f"""select nop.nopd,
         nop.nama_objek_usaha as nama_objek_pajak,
         nop.kode_sudin,
         coalesce(sum.sum_trx,0) as trx1,
@@ -20,27 +25,15 @@ query = """
         coalesce(sum(riil.setoran_pajak),0) as setoran,
         {month} as masapajak,
         {year} as tahunpajak
-    from master_pajak_online_dki.dbo.tbl_nopd as nop
-    left join pajak_online_dki_{year}{month}.dbo.tbl_sum_nopd as sum on sum.nopd = nop.nopd
-    left join pajak_online_dki_{year}{month}.dbo.tbl_adjust_manual as adj on adj.nopd = nop.nopd
-    left join pajak_online_dki_{year}{month}.dbo.tbl_sum_nopd as sum_pod on sum_pod.nopd = nop.nopd
-    left join pajak_online_dki.dbo.tbl_fact_pembayaran_riil as riil on riil.nopd = nop.nopd
-    where nop.nama_objek_usaha not like '%TUTUP%'
-    group by nop.nopd, nop.nama_objek_usaha, nop.kode_sudin, sum.sum_trx, sum.sum_omset, sum_pod.sum_trx, sum_pod.sum_omset
-    order by sum_pod.sum_omset desc
-"""
-
-insert = """
-    insert into tbl_mirror_penarikan
-    (nopd, nama_objek_pajak, kode_sudin,
-    trx1, omset1, trx2, omset2, trx3, omset3,
-    setoran, masapajak, tahunpajak, created_at, updated_at)
-    values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-    %s, %s, GETDATE(), GETDATE())
-"""
-
-def getQuery(month, year):
-    return query.format(month=month, year=year)
+        from master_pajak_online_dki.dbo.tbl_nopd as nop
+        left join pajak_online_dki_{year}{month}.dbo.tbl_sum_nopd as sum on sum.nopd = nop.nopd
+        left join pajak_online_dki_{year}{month}.dbo.tbl_adjust_manual as adj on adj.nopd = nop.nopd
+        left join pajak_online_dki_{year}{month}.dbo.tbl_sum_nopd as sum_pod on sum_pod.nopd = nop.nopd
+        left join pajak_online_dki.dbo.tbl_fact_pembayaran_riil as riil on riil.nopd = nop.nopd
+        where nop.nama_objek_usaha not like '%TUTUP%'
+        group by nop.nopd, nop.nama_objek_usaha, nop.kode_sudin, sum.sum_trx, sum.sum_omset, sum_pod.sum_trx, sum_pod.sum_omset
+        order by sum_pod.sum_omset desc
+    """
 
 def penarikan():
     today = datetime.today()
@@ -48,15 +41,18 @@ def penarikan():
     year = '%d' % (today.year-1 if today.month-1 < 1 else today.year)
     conn = pymssql.connect(MSSQL_HOST,MSSQL_USER,MSSQL_PWD,MSSQL_DB)
     cursor = conn.cursor()
+    
     try:
         cursor.execute(getQuery(month,year))
         penarikan = cursor.fetchall()
         cursor.execute("truncate table tbl_mirror_penarikan")
-        cursor.executemany(insert, penarikan)
+        cursor.executemany(INSERT, penarikan)
         conn.commit()
-        print "Success! Table tbl_mirror_penarikan has been mirrored."
-    except Exception as e:
+        config.loginfo("Success! Table tbl_mirror_penarikan has been mirrored.")
+    
+    except Exception as err:
         conn.rollback()
-        log_error(e)
+        config.logexception(err)
+    
     finally:
         conn.close()
